@@ -35,11 +35,18 @@ const generateFileTagsPrompt = ai.definePrompt({
   output: {schema: GenerateFileTagsOutputSchema},
   prompt: `You are an AI assistant that generates descriptive tags for files.
 
-  Based on the file name, file type, and file content, generate a list of tags that can be used to easily search and organize the file.
+  Based on the file name and file type, generate a list of tags that can be used to easily search and organize the file.
+  {{#ifCond fileType "!==" "image"}}
+  {{#ifCond fileType "!==" "video"}}
+  {{#ifCond fileType "!==" "audio"}}
+  If the file is not a media file, you can also use the file content to generate more accurate tags.
+  File Content (first 1024 characters): {{#slice fileDataUri 0 1024}}{{/slice}}
+  {{/ifCond}}
+  {{/ifCond}}
+  {{/ifCond}}
 
   File Name: {{{fileName}}}
   File Type: {{{fileType}}}
-  File Content (first 1024 characters): {{#slice fileDataUri 0 1024}}{{/slice}}
 
   Tags:`,
 });
@@ -55,4 +62,3 @@ const generateFileTagsFlow = ai.defineFlow(
     return output!;
   }
 );
-
